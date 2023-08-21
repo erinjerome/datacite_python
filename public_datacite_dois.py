@@ -52,7 +52,7 @@ def data_munger(x, xx):
                       'nameType': 'Personal',
                       'givenName': row.author1_fname,
                       'familyName': row.author1_lname,
-                      'affiliation': ['University of Massachusetts Amherst'],
+                      'affiliation': ['author institution'],
                       #to include ORCID
                       'nameIdentifiers':[
                           {
@@ -76,7 +76,7 @@ def data_munger(x, xx):
                               '#descriptionType': 'Abstract'
                           }
                                       ],
-                      'publisher': 'University of Massachusetts Amherst',
+                      'publisher': 'YOUR INSTITUTION',
                       'language': "English",
                       'doi': '10.0000/{0}'.format(row.context_key)})
             '''Be sure to enter your doi prefix above where it says 10.#####.'''
