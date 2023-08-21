@@ -24,7 +24,7 @@ def new_doi():
 
 def pull_dois():
     '''Pulls current crop of DOIs from Datacite API'''
-    response = requests.get('https://api.datacite.org/dois?client-id=umass.uma')#production enviroment api
+    response = requests.get('https://api.datacite.org/dois?client-id=client.id')#add your username here
 
     dois = json.loads(response.text)
     doi_data = dois['data']
@@ -52,7 +52,9 @@ def data_munger(x, xx):
                       'nameType': 'Personal',
                       'givenName': row.author1_fname,
                       'familyName': row.author1_lname,
-                      'affiliation': ['University of Massachusetts Amherst'],
+                      'affiliation': ['University of Massachusetts Amherst'], #add your affiliation here
+
+                      #uncomment nameIdentifiers to include ORCID
                       #'nameIdentifiers':[
                           #{
                             #'schemeUri':'https://orcid.org',
@@ -69,16 +71,17 @@ def data_munger(x, xx):
                                 'resourceType': '',
                                 'resourceTypeGeneral': 'Text' #'Text' for theses, 'Dissertation' for dissertations
                                },
-                      #'descriptions': [
+                 #uncomment descriptions for items with abstracts    
+                 #'descriptions': [
                           #{
                               #'description': row.description,
                               #'#descriptionType': 'Abstract'
                           #}
                                      # ],
-                      'publisher': 'University of Massachusetts Amherst',
+                      'publisher': 'University of Massachusetts Amherst', #your affiliation here
                       'language': "English",
-                      'doi': '10.7275/{0}'.format(row.context_key)})
-            '''Be sure to enter your doi prefix above where it says 10.#####.'''
+                      'doi': '10.0000/{0}'.format(row.context_key)}) #add your doi prefix here 10.####
+            
     return data_package
 
 def doi_packager(y):
@@ -90,14 +93,14 @@ def doi_packager(y):
         data_pack = {'data': {'id': doi_data['doi'], 'type': 'dois', 'attributes':
                          {'event': 'publish', 'doi': doi_data['doi'], 'creators': doi_data['creators'],
                           'titles': [{'title': doi_data['title']}], 'publisher': doi_data['publisher'],
-                          'publicationYear': doi_data['year'], #'descriptions': doi_data['descriptions'],
+                          'publicationYear': doi_data['year'], #'descriptions': doi_data['descriptions'], #if you have abstract, uncomment
                           'types': doi_data['types'],
                           'url': doi_data['uri'], 'schemaVersion': 'http://datacite.org/schema/kernel-4'}}}
         jsonized = json.dumps(data_pack, ensure_ascii=False)
         response = requests.post('https://api.datacite.org/dois',
                                  headers=headers, data=jsonized.encode('utf-8'),
 
-                                 auth=('umass.uma', 'SCh0lC0mm1967')) #this is production login
+                                 auth=('username', 'password')) #this is production login
         print('{0} processed, response: {1}'.format(doi_data['doi'], response.status_code))
         export_dict['id'] = doi_data['id']
         export_dict['doi'] = 'https://doi.org/{0}'.format(doi_data['doi'])
